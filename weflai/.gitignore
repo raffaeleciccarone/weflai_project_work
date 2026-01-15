@@ -1,4 +1,9 @@
 .env
 __pycache__/
 lib/
+*.pyc
+.venv/
+venv/
 .DS_Store
+db
+crewai-rag-tool.lock

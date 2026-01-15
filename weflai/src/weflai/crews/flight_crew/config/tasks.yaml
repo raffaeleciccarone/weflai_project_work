@@ -1,61 +1,56 @@
 #PRENOTAZIONE
-
 ##search fly 
 ##insert booking
 ##generate_ticket
 
 #CANCELLAZIONE
-
 ##findbooking to cancellazione
 ##delete booking
 
-tasks prenotazione :
 search_flight_task:
-  description: > #anche qui con gli attributi del della tabella
+  description: > 
     Analizza la richiesta dell'utente: "{query}".
     1. Recupera lo schema delle tabelle AEROPORTI e VOLI se necessario.
     2. Costruisci una query SQL per trovare il volo che corrisponde a:
        - Città di partenza e arrivo (fai JOIN con AEROPORTI per trovare i codici IATA se l'utente usa nomi città).
        - Data richiesta.
     3. Esegui la query.
-    4. Restituisci TUTTI i dettagli del volo trovato (ID_VOLO, orari, compagnia, prezzi).
+    4. Restituisci TUTTI i dettagli del volo trovato (Id_Volo, OraPTZ, OraARR, Id_AptPTZ, Id_AptARR, DataPTZ, DataARR, Prezzo).
     Se ci sono più voli, seleziona il più pertinente o chiedi chiarimenti (ma per ora assumi il primo).
   expected_output: >
-    Un report dettagliato contenente ID_VOLO, IATA Partenza, IATA Arrivo, Orari e Compagnia.
+    Un report dettagliato contenente Id_Volo, Id_AptPTZ, Id_AptARR, DataPTZ, DataARR, OraPTZ, OraARR, Prezzo.
   agent: flight_analyst
 
 insert_booking_task:
   description: >
     Usa i dettagli del volo trovati nel task precedente e i dati dell'utente (Nome, Cognome) dalla richiesta "{query}".
     1. Crea una query INSERT per la tabella PRENOTAZIONE.
-    2. Assicurati di collegare correttamente l'ID_VOLO.
+    2. Assicurati di collegare correttamente l'Id_Volo.
     3. Verifica la sintassi con 'check_sql'.
     4. Esegui la INSERT.
-    5. Recupera l'ID della nuova prenotazione appena creata.
+    5. Recupera l'Id_prenotazioni della nuova prenotazione appena creata.
   expected_output: >
-    Conferma di inserimento avvenuto con successo, incluso l'ID_PRENOTAZIONE generato.
+    Conferma di inserimento avvenuto con successo, incluso l'Id_prenotazioni generato.
   agent: booking_manager
 
 generate_ticket_task:
   description: >
     Raccogli tutti i dati: Dettagli Volo (dal primo task) e Dettagli Passeggero (dall'inserimento).
     1. Crea una stringa univoca per il QR code (es: "PRENOTAZIONE-{id_prenotazione}").
-    2. Usa il tool 'generate_qr' per creare l'immagine.
+    2. Assicurati che i Cod_Iata e le Citta siano corretti.
     3. Mappa tutti i dati nel modello Pydantic 'TicketOutput'
-    4. Assicurati che i codici IATA e le città siano corretti.
   expected_output: >
-    Un oggetto JSON strutturato secondo TicketOutput con il path del QR code.
+    Un oggetto JSON strutturato secondo TicketOutput.
   agent: customer_experience_agent
 
-tasks cancellazione :
 find_booking_to_cancel_task:
   description: >
     L'utente vuole cancellare una prenotazione. Input: "{query}".
-    1. Cerca nella tabella PRENOTAZIONE filtrando per Nome, Cognome e dettagli volo se presenti.
+    1. Cerca nella tabella PRENOTAZIONE filtrando per NomeUtente, CognomeUtente e dettagli del volo.
     2. Fai una JOIN con VOLI e AEROPORTI per essere sicuro di aver trovato la prenotazione giusta (es. "Volo per Parigi").
-    3. Restituisci l'ID_PRENOTAZIONE univoco.
+    3. Restituisci l'Id_prenotazioni univoco.
   expected_output: >
-    L'ID_PRENOTAZIONE univoco da cancellare e i dettagli di riepilogo per conferma.
+    L'Id_prenotazioni univoco da cancellare e i dettagli di riepilogo per conferma.
   agent: flight_analyst
 
 delete_booking_task:
@@ -65,5 +60,5 @@ delete_booking_task:
     2. Verifica la query con 'check_sql'.
     3. Esegui la cancellazione.
   expected_output: >
-    Messaggio di conferma: "Prenotazione [ID] cancellata con successo".
+    Messaggio di conferma: "Prenotazione: con il preciso Id_prenotazioni cancellata con successo".
   agent: booking_manager
