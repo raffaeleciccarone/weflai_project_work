@@ -1,16 +1,14 @@
 #PRENOTAZIONE
-
 ##search fly 
 ##insert booking
 ##generate_ticket
 
 #CANCELLAZIONE
-
 ##findbooking to cancellazione
 ##delete booking
 
 search_flight_task:
-  description: > #anche qui con gli attributi del della tabella
+  description: > 
     Analizza la richiesta dell'utente: "{query}".
     1. Recupera lo schema delle tabelle AEROPORTI e VOLI se necessario.
     2. Costruisci una query SQL per trovare il volo che corrisponde a:
