@@ -23,7 +23,7 @@ db = SQLDatabase.from_uri(database_uri = "postgresql://chri00:rudogachia@localho
                           schema='public', 
                           engine_args={"isolation_level": "AUTOCOMMIT"})
 
-ollama_llm = LLM (
+llm = LLM (
     model = "ollama/llama3.1:8b",
     base_url="http://localhost:11434"
 )
@@ -58,44 +58,70 @@ def check_sql_tool(sql_query:str) -> str:
         return f"Error using QuerySQLCheckerTool: {str(e)}"
 
 @CrewBase
-class PoemCrew:
-    """Poem Crew"""
+class FlightCrew:
+    """Flight Crew"""
 
     agents: List[BaseAgent]
     tasks: List[Task]
 
-    # Learn more about YAML configuration files here:
-    # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
-    # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
+    
     agents_config = "config/agents.yaml"
-    tasks_config = "config/tasks.yaml"
-
-    # If you would lik to add tools to your crew, you can learn more about it here:
-    # https://docs.crewai.com/concepts/agents#agent-tools
+    tasks_inserimento_config = "config/tasks_inserimento.yaml"
+    tasks_cancellazione_config = "config/tasks_cancellazione.yaml"
 
     
     @agent
-    def poem_writer(self) -> Agent:
+    def flight_analyst(self) -> Agent:
         return Agent(
-            config=self.agents_config["poem_writer"],  # type: ignore[index]
-            llm = ollama_llm
+            config=self.agents_config['flight_analyst'],
+            llm=llm,
+            verbose=True,
         )
-        
+    @agent
+    def booking_manager(self) -> Agent:
+        return Agent(
+            config=self.agents_config['booking_manager'],
+            llm=llm,
+            verbose=True,
+        )
+    @agent
+    def customer_experience_agent(self) -> Agent:
+        return Agent(
+            config=self.agents_config['customer_experience_agent'],
+            llm=llm,
+            verbose=True,
+        )
 
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
-    def write_poem(self) -> Task:
+    def search_flight_task(self) -> Task:
         return Task(
-            config=self.tasks_config["write_poem"],  # type: ignore[index]
+            config=self.tasks_config["search_flight_task"],  # type: ignore[index]
         )
-
+    @task
+    def insert_booking_task(self) -> Task:
+        return Task(
+            config=self.tasks_config["insert_booking_task"],  # type: ignore[index]
+        )
+    @task
+    def generate_ticket_task(self) -> Task:
+        return Task(
+            config=self.tasks_config["generate_ticket_task"],  # type: ignore[index]
+        )
+    @task
+    def find_booking_to_cancel_task(self) -> Task:
+        return Task(
+            config=self.tasks_config["find_booking_to_cancel_task"],  # type: ignore[index]
+        )
+    @task
+    def delete_booking_task(self) -> Task:
+        return Task(
+            config=self.tasks_config["delete_booking_task"],  # type: ignore[index]
+        )
+    
     @crew
     def crew(self) -> Crew:
         """Creates the Research Crew"""
-        # To learn how to add knowledge sources to your crew, check out the documentation:
-        # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
+        
 
         return Crew(
             agents=self.agents,  # Automatically created by the @agent decorator
