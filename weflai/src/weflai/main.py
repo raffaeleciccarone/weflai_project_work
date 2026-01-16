@@ -2,7 +2,7 @@
 from random import randint
 from pydantic import BaseModel
 from crewai.flow import Flow, listen, start
-from weflai.src.weflai.crews.flight_crew.Weflai_crew import PoemCrew
+from weflai.src.weflai.crews.flight_crew.Weflai_crew import flight_crew
 from pydantic import BaseModel, Field
 from typing import Optional
 

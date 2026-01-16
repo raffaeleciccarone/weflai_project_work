@@ -108,7 +108,7 @@ class InserimentoCrew():
         return Task(
             config=self.tasks_config["insert_booking_task"],  # type: ignore[index]
         )
-        
+
     @task
     def generate_JSON_ticket_task(self) -> Task:
         return Task(
