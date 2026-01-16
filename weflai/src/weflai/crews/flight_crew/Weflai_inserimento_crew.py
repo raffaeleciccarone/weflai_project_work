@@ -17,9 +17,9 @@ from langchain_community.tools.sql_database.tool import (
 
 
 
-db = SQLDatabase.from_uri(database_uri = "postgresql://chri00:rudogachia@localhost:5432/postgres", 
-                          schema='public', 
-                          engine_args={"isolation_level": "AUTOCOMMIT"})
+db = SQLDatabase.from_uri(database_uri = "postgresql://Joe:1234@localhost:5432/postgres", 
+                          schema='We_FlAI', 
+                          )
 
 llm = LLM (
     model = "ollama/llama3.1:8b",
