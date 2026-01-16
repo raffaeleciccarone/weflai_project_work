@@ -76,6 +76,7 @@ class InserimentoCrew():
             verbose=True,
             
         )
+
     @agent
     def booking_manager(self) -> Agent:
         return Agent(
@@ -85,6 +86,7 @@ class InserimentoCrew():
             verbose=True,
             
         )
+
     @agent
     def customer_experience_agent(self) -> Agent:
         return Agent(
@@ -100,11 +102,13 @@ class InserimentoCrew():
         return Task(
             config=self.tasks_config["search_flight_task"],  # type: ignore[index]
         )
+
     @task
     def insert_booking_task(self) -> Task:
         return Task(
             config=self.tasks_config["insert_booking_task"],  # type: ignore[index]
         )
+        
     @task
     def generate_JSON_ticket_task(self) -> Task:
         return Task(
