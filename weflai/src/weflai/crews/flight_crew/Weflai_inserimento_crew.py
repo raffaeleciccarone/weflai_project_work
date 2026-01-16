@@ -116,8 +116,8 @@ class InserimentoCrew():
     def crew(self) -> Crew:
         """Creates the Research Crew"""
         return Crew(
-            agents=self.agents,  # Automatically created by the @agent decorator
-            tasks=self.tasks,  # Automatically created by the @task decorator
+            agents=self.agents,  #decoratore che importa tutti gli agenti definiti con @agent
+            tasks=self.tasks,  #decoratore che importa tutte le task definite con @task
             process=Process.sequential,
             verbose=True,
         )
