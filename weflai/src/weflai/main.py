@@ -6,7 +6,6 @@ from weflai.src.weflai.crews.flight_crew.Weflai_crew import PoemCrew
 from pydantic import BaseModel, Field
 from typing import Optional
 
-#test
 class TicketOutput(BaseModel):
     partenza_iata: str = Field(..., description="Codice IATA aeroporto partenza")
     partenza_citta: str = Field(..., description="Città di partenza")
