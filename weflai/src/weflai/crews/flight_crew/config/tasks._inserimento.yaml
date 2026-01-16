@@ -33,13 +33,14 @@ insert_booking_task:
     Conferma di inserimento avvenuto con successo, incluso l'Id_prenotazioni generato.
   agent: booking_manager
 
-generate_ticket_task:
+generate_JSON_ticket_task:
   description: >
-    Raccogli tutti i dati: Dettagli Volo (dal primo task) e Dettagli Passeggero (dall'inserimento).
-    1. Crea una stringa univoca per il QR code (es: "PRENOTAZIONE-{id_prenotazione}").
-    2. Assicurati che i Cod_Iata e le Citta siano corretti.
-    3. Mappa tutti i dati nel modello Pydantic 'TicketOutput'
+    Sei responsabile della creazione del biglietto finale.
+    1. Raccogli i dati completi del volo (IATA, Città, Orari, Prezzo, Compagnia) dal report del search_flight_task.
+    2. Raccogli i dati del passeggero (Nome, Cognome) e l'ID Prenotazione dall'insert_booking_task.
+    3. Mappa rigorosamente tutti i campi nel formato JSON richiesto.
+    4. Assicurati che i tipi di dato siano corretti (numeri come numeri, stringhe come stringhe).
   expected_output: >
-    Un oggetto JSON strutturato secondo TicketOutput.
+    Un oggetto JSON valido e completo corrispondente allo schema TicketOutput.
   agent: customer_experience_agent
 

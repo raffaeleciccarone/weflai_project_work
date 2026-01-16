@@ -15,9 +15,7 @@ from langchain_community.tools.sql_database.tool import (
     QuerySQLDatabaseTool
 )
 
-# If you want to run a snippet of code before or after the crew starts,
-# you can use the @before_kickoff and @after_kickoff decorators
-# https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+
 
 db = SQLDatabase.from_uri(database_uri = "postgresql://chri00:rudogachia@localhost:5432/postgres", 
                           schema='public', 
@@ -58,8 +56,8 @@ def check_sql_tool(sql_query:str) -> str:
         return f"Error using QuerySQLCheckerTool: {str(e)}"
 
 @CrewBase
-class FlightCrew:
-    """Flight Crew"""
+class InserimentoCrew():
+    """Inserimento Crew"""
 
     agents: List[BaseAgent]
     tasks: List[Task]
@@ -67,29 +65,34 @@ class FlightCrew:
     
     agents_config = "config/agents.yaml"
     tasks_inserimento_config = "config/tasks_inserimento.yaml"
-    tasks_cancellazione_config = "config/tasks_cancellazione.yaml"
 
     
     @agent
     def flight_analyst(self) -> Agent:
         return Agent(
             config=self.agents_config['flight_analyst'],
+            tools=[list_tables_tool, tables_schema_tool, execute_sql_tool], #assegnati tool di lettura
             llm=llm,
             verbose=True,
+            
         )
     @agent
     def booking_manager(self) -> Agent:
         return Agent(
             config=self.agents_config['booking_manager'],
+            tools=[check_sql_tool,execute_sql_too], #assegnati tool di scrittura
             llm=llm,
             verbose=True,
+            
         )
     @agent
     def customer_experience_agent(self) -> Agent:
         return Agent(
             config=self.agents_config['customer_experience_agent'],
-            llm=llm,
+            tools=[], 
+            llm=ollama_llm,
             verbose=True,
+            
         )
 
     @task
@@ -103,26 +106,15 @@ class FlightCrew:
             config=self.tasks_config["insert_booking_task"],  # type: ignore[index]
         )
     @task
-    def generate_ticket_task(self) -> Task:
+    def generate_JSON_ticket_task(self) -> Task:
         return Task(
-            config=self.tasks_config["generate_ticket_task"],  # type: ignore[index]
+            config=self.tasks_config["generate_JSON_ticket_task"],  # type: ignore[index]
         )
-    @task
-    def find_booking_to_cancel_task(self) -> Task:
-        return Task(
-            config=self.tasks_config["find_booking_to_cancel_task"],  # type: ignore[index]
-        )
-    @task
-    def delete_booking_task(self) -> Task:
-        return Task(
-            config=self.tasks_config["delete_booking_task"],  # type: ignore[index]
-        )
+    
     
     @crew
     def crew(self) -> Crew:
         """Creates the Research Crew"""
-        
-
         return Crew(
             agents=self.agents,  # Automatically created by the @agent decorator
             tasks=self.tasks,  # Automatically created by the @task decorator
