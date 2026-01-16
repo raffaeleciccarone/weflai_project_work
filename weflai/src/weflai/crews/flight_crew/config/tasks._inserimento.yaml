@@ -43,22 +43,3 @@ generate_ticket_task:
     Un oggetto JSON strutturato secondo TicketOutput.
   agent: customer_experience_agent
 
-find_booking_to_cancel_task:
-  description: >
-    L'utente vuole cancellare una prenotazione. Input: "{query}".
-    1. Cerca nella tabella PRENOTAZIONE filtrando per NomeUtente, CognomeUtente e dettagli del volo.
-    2. Fai una JOIN con VOLI e AEROPORTI per essere sicuro di aver trovato la prenotazione giusta (es. "Volo per Parigi").
-    3. Restituisci l'Id_prenotazioni univoco.
-  expected_output: >
-    L'Id_prenotazioni univoco da cancellare e i dettagli di riepilogo per conferma.
-  agent: flight_analyst
-
-delete_booking_task:
-  description: >
-    Usa l'ID_PRENOTAZIONE trovato dal task precedente.
-    1. Crea una query DELETE sicura (WHERE id = ...).
-    2. Verifica la query con 'check_sql'.
-    3. Esegui la cancellazione.
-  expected_output: >
-    Messaggio di conferma: "Prenotazione: con il preciso Id_prenotazioni cancellata con successo".
-  agent: booking_manager
