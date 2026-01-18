@@ -1,0 +1,54 @@
+search_flight_task:
+  description: >
+    1. Analizza "{query}" ed estrai città partenza, arrivo e data.
+    2. Esegui query SQL su we_flai.voli:
+       - JOIN con aeroporti (partenza e arrivo).
+       - Filtra per citta (partenza/arrivo) usando ILIKE.
+       - Filtra per data_ptz = 'data'::DATE.
+    3. Se non trovi nulla, riesegui con: WHERE data_ptz BETWEEN 'data'::DATE - 3 AND 'data'::DATE + 3.
+    4. Restituisci SOLO l'id_volo risultante (un numero) oppure "ERRORE_VOLO_NON_TROVATO".
+    
+  expected_output: >
+    Un numero intero o la stringa "ERRORE_VOLO_NON_TROVATO".
+  agent: flight_analyst
+
+confirm_selection_task:
+  description: >
+    Ricevi l'id_volo. Se è un errore, comunica il fallimento. 
+    Se è un numero, recupera i dettagli del volo (compagnia, tratta, data, orari, prezzo) dalla tabella voli e mostrali all'utente.
+    Chiedi conferma (Sì/No). 
+    Output finale: "CONFERMATO|[id_volo]" oppure "ANNULLATO".
+  expected_output: >
+    Formato "CONFERMATO|[numero]" o "ANNULLATO".
+  agent: flight_analyst
+  human_input: true
+
+
+
+insert_booking_task:
+  description: >
+    1. Se l'input è "CONFERMATO|X", estrai l'id_volo X.
+    2. Estrai da "{query}" nome_utente, cognome_utente, mail_utente.
+    3. Genera id_documento se mancante (DOC + timestamp).
+    4. Esegui: INSERT INTO we_flai.prenotazioni (id_volo, id_documento, nome_utente, cognome_utente, mail_utente) 
+       VALUES (...) RETURNING id_prenotazione.
+    5. Raddoppia gli apostrofi nei nomi/cognomi per evitare errori SQL.
+    Usa l'id_volo ottenuto. Inserisci in we_flai.prenotazioni:
+    id_volo, id_documento, nome_utente, cognome_utente, mail_utente.
+    Usa RETURNING id_prenotazione.
+  expected_output: >
+    L'id_prenotazione (numero intero) generato dal database.
+  agent: booking_manager
+
+generate_JSON_ticket_task:
+  description: >
+    Usa l'id_prenotazione ricevuto per fare una query JOIN completa su we_flai.prenotazioni, we_flai.voli e we_flai.aeroporti.
+    Crea l'oggetto TicketOutput mappando i campi:
+    - id_prenotazione (stringa)
+    - passeggero (nome_utente + spazio + cognome_utente)
+    - tratta (citta_partenza - citta_arrivo)
+    - orari (formato HH:MM)
+    Verifica che i codici IATA siano di 3 caratteri maiuscoli.
+  expected_output: >
+    Oggetto TicketOutput JSON validato.
+  agent: customer_experience_agent

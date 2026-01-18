@@ -1,0 +1,14 @@
+answer_info_task:
+  description: >
+    Analizza la domanda dell'utente: "{query}".
+    
+    STRATEGIA DECISIONALE:
+    1. Se la domanda riguarda dati numerici o strutturati (es. "Volo Milano Roma", "Orario", "Prezzo"), 
+       usa il tool SQL (`execute_sql`).
+    2. Se la domanda riguarda testo, regole o policy (es. "Peso bagaglio", "Posso portare il gatto?", "Penali cancellazione"), 
+       usa il tool PDF Search (`pdf_search`).
+       
+    Fornisci una risposta completa e gentile in italiano basata sui dati trovati.
+  expected_output: >
+    La risposta testuale pronta per l'utente (es. "Il volo parte alle 14:00" oppure "Il bagaglio a mano deve pesare max 8kg").
+  agent: info_rag_agent

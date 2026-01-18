@@ -5,7 +5,12 @@ description = "weflai using crewAI"
 authors = [{ name = "Your Name", email = "you@example.com" }]
 requires-python = ">=3.10,<3.14"
 dependencies = [
-    "crewai[tools]==1.6.1"
+    "crewai",
+    "crewai-tools",
+    "langchain_community",
+    "psycopg2-binary",
+    "litellm",
+    "chromadb>=1.1.1",
 ]
 
 [project.scripts]

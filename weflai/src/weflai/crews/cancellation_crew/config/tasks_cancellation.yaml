@@ -1,0 +1,16 @@
+find_booking_to_cancel_task:
+  description: >
+    Cerca l'id_prenotazione basandoti su nome_utente e cognome_utente estratti da "{query}".
+    Filtra anche per citta di arrivo (tabella aeroporti) o data se presenti nella richiesta.
+    Restituisci solo l'ID numerico trovato. Se incerto, rispondi "ERRORE: SPECIFICARE MEGLIO".
+  expected_output: >
+    Numero intero o messaggio di errore.
+  agent: flight_analyst
+
+delete_booking_task:
+  description: >
+    Esegui: DELETE FROM we_flai.prenotazioni WHERE id_prenotazione = [ID_RICEVUTO].
+    Conferma l'avvenuta cancellazione.
+  expected_output: >
+    Testo di conferma della cancellazione.
+  agent: booking_manager
